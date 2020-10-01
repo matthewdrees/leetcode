@@ -67,6 +67,8 @@ def largest_palendromic_number_multiplying_x_digits(num_digits_to_multiply):
             break
         for y in range(x, largest_palendrome // x, -1):
             num = x * y
+            if num < largest_palendrome:
+                break
             if is_number_palendrome(num):
                 if num > largest_palendrome:
                     largest_palendrome = num
