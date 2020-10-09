@@ -1,6 +1,7 @@
 """Common project euler operations."""
 
 import math
+import numpy as np
 
 
 def is_prime(n):
@@ -37,6 +38,33 @@ def is_prime(n):
         if n % x == 0:
             return False
     return True
+
+
+def primesfrom2to(n):
+    """Primes from 2 to < n.
+
+    Lifted from:
+    https://stackoverflow.com/questions/2068372/fastest-way-to-list-all-primes-below-n-in-python/3035188#3035188
+
+    :param n: primes 2 <= to < n. n must be >= 6.
+    :return: numpy array of primes
+
+    >>> primesfrom2to(6)
+    array([2, 3, 5])
+    >>> primesfrom2to(7)
+    array([2, 3, 5])
+    >>> primesfrom2to(8)
+    array([2, 3, 5, 7])
+    """
+    assert n >= 6
+    sieve = np.ones(n // 3 + (n % 6 == 2), dtype=np.bool)
+    sieve[0] = False
+    for i in range(int(n ** 0.5) // 3 + 1):
+        if sieve[i]:
+            k = 3 * i + 1 | 1
+            sieve[((k * k) // 3) :: 2 * k] = False
+            sieve[(k * k + 4 * k - 2 * k * (i & 1)) // 3 :: 2 * k] = False
+    return np.r_[2, 3, ((3 * np.nonzero(sieve)[0] + 1) | 1)]
 
 
 def sieve_of_eratosthenes(n):
