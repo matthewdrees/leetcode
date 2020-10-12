@@ -49,6 +49,8 @@ def primesfrom2to(n):
     :param n: primes 2 <= to < n. n must be >= 6.
     :return: numpy array of primes
 
+    >>> primesfrom2to(3)
+    array([2])
     >>> primesfrom2to(6)
     array([2, 3, 5])
     >>> primesfrom2to(7)
@@ -56,7 +58,13 @@ def primesfrom2to(n):
     >>> primesfrom2to(8)
     array([2, 3, 5, 7])
     """
-    assert n >= 6
+    if n < 3:
+        return np.array()
+    if n < 4:
+        return np.array([2])
+    if n < 6:
+        return np.array([2, 3])
+
     sieve = np.ones(n // 3 + (n % 6 == 2), dtype=np.bool)
     sieve[0] = False
     for i in range(int(n ** 0.5) // 3 + 1):
