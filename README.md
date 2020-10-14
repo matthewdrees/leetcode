@@ -1,1 +1,3 @@
-# leetcode solutions
+# kata
+
+Software exercises for sharpening the saw.
