@@ -45,11 +45,46 @@ bool test_add_consecutive_numbers()
     return passed;
 }
 
+bool test_is_prime()
+{
+    struct TestCase
+    {
+        int n;
+        bool expected;
+    };
+
+    TestCase testCases[] = {
+        {1, false},
+        {2, true},
+        {3, true},
+        {4, false},
+        {5, true},
+        {6, false},
+        {7, true},
+        {8, false},
+        {9, false},
+        {10, false}};
+
+    bool passed = true;
+    for (const auto &tc : testCases)
+    {
+        const auto actual = is_prime(tc.n);
+        if (tc.expected != actual)
+        {
+            passed = false;
+            std::cerr << __FILE__ << ":" << __LINE__ << ", FAIL, " << __FUNCTION__
+                      << "(n: " << tc.n << "), expected: " << tc.expected << ", actual: " << actual << "\n";
+        }
+    }
+    return passed;
+}
+
 int main()
 {
     bool passed = true;
 
     passed = passed && test_add_consecutive_numbers();
+    passed = passed && test_is_prime();
 
     return passed ? 0 : 1;
 }
