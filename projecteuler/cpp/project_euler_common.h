@@ -32,7 +32,8 @@ bool is_prime(T n)
     {
         return false;
     }
-    for (int i = 3; i < static_cast<T>(std::sqrt(n)) + 1; i += 2)
+    const T end_i = static_cast<T>(std::sqrt(n)) + 1;
+    for (int i = 3; i < end_i; i += 2)
     {
         if (n % i == 0)
         {
