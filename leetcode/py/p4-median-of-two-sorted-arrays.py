@@ -5,6 +5,7 @@ Given two sorted arrays nums1 and nums2 of size m and n respectively, return the
 Follow up: The overall run time complexity should be O(log (m+n)).
 """
 
+import itertools
 import math
 import statistics
 from typing import List
@@ -33,6 +34,27 @@ class Solution:
         # Start off in middle of each.
 
         # Whichever number is bigger, set ranges, from that number to end.
+
+
+def test_all_combinations(arr):
+    """Test all combinations, making 2 arrays out of arr."""
+
+    expected = statistics.median(arr)
+    for len_arr_1 in range(len(arr)):
+        len_arr_2 = len(arr) - len_arr_1
+        for l1_indexes in itertools.combinations_with_replacement(
+            range(len_arr_1), len_arr_1
+        ):
+            l1 = []
+            l2 = []
+            for x in range(len(arr)):
+                if x in l1_indexes:
+                    l1.append(arr[x])
+                else:
+                    l2.append(arr[x])
+            print("-----")
+            print(l1)
+            print(l2)
 
 
 def test_findMedianSortedArrays():
@@ -65,3 +87,4 @@ def test_findMedianSortedArrays():
 
 if __name__ == "__main__":
     test_findMedianSortedArrays()
+    test_all_combinations([1, 2, 3])
