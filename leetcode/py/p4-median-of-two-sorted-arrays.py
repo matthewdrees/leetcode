@@ -25,14 +25,14 @@ class BisectIndex:
     def go_left(self):
         if self.index <= self.left:
             return False
-        self.right = self.index
+        self.right = self.index - 1
         self.index -= (self.index - self.left + 1) // 2
         return True
 
     def go_right(self):
         if self.index >= self.right:
             return False
-        self.left = self.index
+        self.left = self.index + 1
         self.index += (self.right - self.index + 1) // 2
         return True
 
@@ -72,7 +72,9 @@ class Solution:
             if nums1[i1] < nums2[i2]:
                 i2_high = i2
                 if bi1.go_right():
-                    i2 -= i1 - bi1.get_index()
+                    i2 -= bi1.get_index() - i1
+                    if i2 < 0:
+                        return min(nums1[bi1.get_index()], nums2[0])
                     continue
                 else:
                     # number is in nums2
@@ -88,14 +90,25 @@ class Solution:
             if nums1[i1] > nums2[i2 + 1]:
                 i2_low = i2 + 1
                 if bi1.go_left():
-                    i2 += bi1.get_index() - i1
+                    i2 += i1 - bi1.get_index()
                     continue
                 else:
+                    # number is in nums2
                     break
 
             return nums1[i1]
 
         return nums2[(i2_high + i2_low) // 2]
+
+    def findMedianSortedArraysEven(self, nums1: List[int], nums2: List[int]) -> float:
+
+        low, high = calculate_bounds(nums1, nums2)
+        bi1 = BisectIndex(low, high)
+        i2 = (len(nums2) - 1) // 2 + ((len(nums2) + 1) % 2)
+        i2_low, i2_high = calculate_bounds(nums2, nums1)
+
+        while True:
+            i1 = bi1.get_index()
 
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
 
@@ -104,7 +117,7 @@ class Solution:
 
         if (len(nums1) + len(nums2)) % 2 == 1:
             return self.findMedianSortedArraysOdd(nums1, nums2)
-        return 1.0
+        return self.findMedianSortedArraysEven(nums1, nums2)
 
 
 def test_all_combinations(arr):
@@ -169,5 +182,5 @@ def test_findMedianSortedArrays():
 if __name__ == "__main__":
     # test_findMedianSortedArrays()
     s = Solution()
-    print(s.findMedianSortedArrays([1, 3], [2, 4, 5]))
-    test_all_combinations([1, 2, 3, 4, 5])
+    print(s.findMedianSortedArrays([1, 2, 4], [3, 5]))
+    test_all_combinations([1, 2])
