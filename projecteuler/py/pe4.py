@@ -4,43 +4,7 @@ A palindromic number reads the same both ways. The largest palindrome made from 
 
 Find the largest palindrome made from the product of two 3-digit numbers.
 """
-
-
-def is_number_palendrome(number):
-    """Return true if number is a palendrome.
-
-    >>> is_number_palendrome(0)
-    True
-    >>> is_number_palendrome(1)
-    True
-    >>> is_number_palendrome(9)
-    True
-    >>> is_number_palendrome(10)
-    False
-    >>> is_number_palendrome(11)
-    True
-    >>> is_number_palendrome(12)
-    False
-    >>> is_number_palendrome(121)
-    True
-    >>> is_number_palendrome(921)
-    False
-    >>> is_number_palendrome(129)
-    False
-    >>> is_number_palendrome(9009)
-    True
-    >>> is_number_palendrome(1011)
-    False
-    >>> is_number_palendrome(1101)
-    False
-    >>> is_number_palendrome(1111)
-    True
-    """
-    s = str(number)
-    for i in range(len(s) // 2):
-        if s[i] != s[-(i + 1)]:
-            return False
-    return True
+import common
 
 
 def largest_palendromic_number_multiplying_x_digits(num_digits_to_multiply):
@@ -69,7 +33,7 @@ def largest_palendromic_number_multiplying_x_digits(num_digits_to_multiply):
             num = x * y
             if num < largest_palendrome:
                 break
-            if is_number_palendrome(num):
+            if common.is_number_palendrome(num):
                 if num > largest_palendrome:
                     largest_palendrome = num
                     break

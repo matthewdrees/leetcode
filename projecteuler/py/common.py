@@ -40,6 +40,71 @@ def is_prime(n):
     return True
 
 
+def is_number_palendrome(n: int, base: int = 10):
+    """Return true if n is a palendrome.
+
+    :param n: number to check for palendrome.
+    :param base: base of number to check for.
+    :return: True if is a palendrome.
+
+    >>> is_number_palendrome(0)
+    True
+    >>> is_number_palendrome(1)
+    True
+    >>> is_number_palendrome(9)
+    True
+    >>> is_number_palendrome(10)
+    False
+    >>> is_number_palendrome(11)
+    True
+    >>> is_number_palendrome(12)
+    False
+    >>> is_number_palendrome(121)
+    True
+    >>> is_number_palendrome(921)
+    False
+    >>> is_number_palendrome(129)
+    False
+    >>> is_number_palendrome(9009)
+    True
+    >>> is_number_palendrome(1011)
+    False
+    >>> is_number_palendrome(1101)
+    False
+    >>> is_number_palendrome(1111)
+    True
+    >>> is_number_palendrome(1, 2)
+    True
+    >>> is_number_palendrome(2, 2)
+    False
+    >>> is_number_palendrome(3, 2)
+    True
+    >>> is_number_palendrome(4, 2)
+    False
+    >>> is_number_palendrome(5, 2)
+    True
+    >>> is_number_palendrome(6, 2)
+    False
+    >>> is_number_palendrome(7, 2)
+    True
+    >>> is_number_palendrome(8, 2)
+    False
+    >>> is_number_palendrome(9, 2)
+    True
+    """
+    # Notes:
+    # 1. It's possible to have a base 1 number (counting with line scratches). YAGNI.
+    # 2. Deal with base 16 if it ever comes up (substitute in letters for 10 - 15).
+    assert base >= 2 and base <= 10
+    digits = []
+    while n != 0:
+        digits.append(n % base)
+        n = n // base
+    half = len(digits) // 2
+    # Compare first half to last half reversed.
+    return digits[0:half] == digits[: -half - 1 : -1]
+
+
 def primesfrom2to(n):
     """Primes from 2 to < n.
 
