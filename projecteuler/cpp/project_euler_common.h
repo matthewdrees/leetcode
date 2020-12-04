@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 // Returns sum of consecutive numbers from first to last.
@@ -16,6 +17,40 @@ T add_consecutive_numbers(T first, T last)
     // Carl Gauss's formula.
     const T total_numbers = last - first + 1;
     return total_numbers * (first + last) / 2;
+}
+
+// Returns true if product of x1 and x2 will fit in the type T.
+//
+// \param n1: First number to multiply.
+// \param n2: Second number to multiply.
+template <class T>
+bool product_will_fit_type_max_value(T n1, T n2)
+{
+    if (n1 == 0 || n2 == 0)
+    {
+        return true;
+    }
+    T product = n1 * n2;
+    return product / n1 == n2;
+}
+
+// Return factorial of n.
+//
+// \param n: nth factorial paramater to find.
+// \return: n! if n >= 0 and the answer fits in T, otherwise 0.
+template <class T>
+T factorial(T n)
+{
+    T total = 1;
+    for (T i = 2; i <= n; ++i)
+    {
+        if (!product_will_fit_type_max_value(i, total))
+        {
+            return 0;
+        }
+        total *= i;
+    }
+    return total;
 }
 
 // Primes from 2 to < n.
