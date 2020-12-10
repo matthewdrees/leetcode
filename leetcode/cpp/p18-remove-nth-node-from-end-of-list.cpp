@@ -21,10 +21,11 @@
 #include <sstream>
 #include <vector>
 
-/**
- * Definition for singly-linked list.
- */
-struct ListNode {
+//
+// Definition for singly-linked list.
+//
+class ListNode {
+public:
     int val;
     ListNode* next;
     ListNode()
@@ -105,7 +106,7 @@ std::string ln2str(const ListNode* l)
     return oss.str();
 }
 
-/** Convert a vector of ints to the ListNode representation. */
+// Convert a vector of ints to the ListNode representation.
 ListNode* vec2Ln(const std::vector<int>& v)
 {
     ListNode* head = nullptr;
