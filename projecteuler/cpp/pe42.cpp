@@ -10,6 +10,8 @@
 //
 // Using https://projecteuler.net/project/resources/p042_words.txt, a 16K text file containing nearly
 // two-thousand common English words, how many are triangle words?
+#include "unittest.h"
+
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -28,30 +30,13 @@ int get_word_score(std::string word)
 
 int test_get_word_score()
 {
-    struct TestCase
+    return unittest::test_s_i(__FUNCTION__, get_word_score,
     {
-        std::string s;
-        int expected;
-    };
-    TestCase testCases[] = {
         {"A", 1},
         {"B", 2},
         {"Z", 26},
         {"SKY", 55},
-    };
-    int num_fails = 0;
-    for (const auto &tc : testCases)
-    {
-        const auto actual = get_word_score(tc.s);
-        if (tc.expected != actual)
-        {
-            ++num_fails;
-            std::cerr << __FILE__ << ":" << __LINE__ << ", FAIL, " << __FUNCTION__
-                      << "(s: " << tc.s
-                      << "), expected: " << tc.expected << ", actual: " << actual << "\n";
-        }
-    }
-    return num_fails;
+    });
 }
 
 bool is_triangle_number(int n)
