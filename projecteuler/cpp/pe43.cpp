@@ -20,13 +20,18 @@
 
 bool has_interesting_substring_divisibility_property(std::string s)
 {
+    // Optimization for divisor 2.
+    if ((s[3] - '0') % 2 != 0)
+    {
+        return false;
+    }
     struct PosDiv
     {
         size_t pos;
         int divisor;
     };
     const PosDiv posDivs[] = {
-        {1, 2},
+        // {1, 2}, See optimization above.
         {2, 3},
         {3, 5},
         {4, 7},
