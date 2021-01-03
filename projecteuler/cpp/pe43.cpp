@@ -17,11 +17,12 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <vector>
 
-bool has_interesting_substring_divisibility_property(std::string s)
+bool has_interesting_substring_divisibility_property(const std::vector<int8_t> &v)
 {
-    // Optimization for divisor 2.
-    if ((s[3] - '0') % 2 != 0)
+    // Optimization for divisors = 2 or 5.
+    if (v[3] % 2 != 0 || v[5] % 5 != 0)
     {
         return false;
     }
@@ -33,29 +34,43 @@ bool has_interesting_substring_divisibility_property(std::string s)
     const PosDiv posDivs[] = {
         // {1, 2}, See optimization above.
         {2, 3},
-        {3, 5},
+        // {3, 5}, See optimization above.
         {4, 7},
         {5, 11},
         {6, 13},
         {7, 17},
     };
-    return std::all_of(std::begin(posDivs), std::end(posDivs), [=](PosDiv pd) {
-        return std::stoi(s.substr(pd.pos, 3)) % pd.divisor == 0;
+    return std::all_of(std::begin(posDivs), std::end(posDivs), [&](PosDiv pd) {
+        int total = 0;
+        for (int i = pd.pos; i < pd.pos + 3; ++i)
+        {
+            total = total * 10 + v[i];
+        }
+        return total % pd.divisor == 0;
     });
 }
 
-// Return the largest pandigital prime
+int64_t get_int64_from_digits(const std::vector<int8_t> &v)
+{
+    int64_t total = 0;
+    for (auto d : v)
+    {
+        total = total * 10 + d;
+    }
+    return total;
+}
+
 int main()
 {
     int64_t total = 0;
-    std::string s = std::string("0123456789");
+    std::vector<int8_t> v = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     do
     {
-        if (has_interesting_substring_divisibility_property(s))
+        if (has_interesting_substring_divisibility_property(v))
         {
-            total += std::stoll(s);
+            total += get_int64_from_digits(v);
         }
-    } while (std::next_permutation(s.begin(), s.end()));
+    } while (std::next_permutation(v.begin(), v.end()));
     std::cout << total << '\n';
     return 0;
 }
