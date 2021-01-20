@@ -1,46 +1,11 @@
 // PSP problem 5. Using PSP2, write a program to numerically integrate a function
 // using Simpson’s rule.  Use the t-distribution as the function.
-#include <cassert>
-#include <cmath>
 #include <iostream>
-#include <optional>
 
-#include <boost/math/constants/constants.hpp>
 #include <boost/math/special_functions/relative_difference.hpp>
 
-// Factorial of n
-int64_t factorial(int64_t n)
-{
-    assert(n >= 0);
-    assert(n <= 20); // factorial(21) overflows an int64_t.
-    int64_t fac = 1;
-    for (int i = 2; i <= n; ++i)
-    {
-        fac *= i;
-    }
-    return fac;
-}
-
-// The gamma function for the special case of n/2.
-//
-// \param numerator: n/2 for gamma function. Range: 0 < numerator <= 40.
-// \return gamma function for n/2.
-double gamma_n_over_2(int numerator)
-{
-    assert(numerator > 0);
-    assert(numerator <= 40);
-    if (numerator % 2 == 0)
-    {
-        return static_cast<double>(factorial((numerator / 2) - 1));
-    }
-
-    double d = std::sqrt(boost::math::constants::pi<double>());
-    for (int i = 1; i < numerator; i += 2)
-    {
-        d *= static_cast<double>(i) / 2.0;
-    }
-    return d;
-}
+#include "integration.hpp"
+#include "statistics.hpp"
 
 int test_gamma_n_over_2()
 {
@@ -76,38 +41,6 @@ int test_gamma_n_over_2()
     }
     return num_fails;
 }
-
-class TDistribution
-{
-    // Degrees of freedom for this t-distribution.
-    // Valid range: (0 < dof <= 40).
-    const int dof;
-
-    // Intermediate calculation that doesn't change with x.
-    const double intermediate_calc;
-
-public:
-    explicit TDistribution(int degrees_of_freedom) : dof(degrees_of_freedom),
-                                                     intermediate_calc(gamma_n_over_2(dof + 1) /
-                                                                       gamma_n_over_2(dof) /
-                                                                       std::sqrt(dof * boost::math::constants::pi<double>()))
-    {
-        assert(dof > 0);
-        assert(dof <= 40);
-        assert(std::isfinite(intermediate_calc));
-    }
-
-    double get_dof() const noexcept { return dof; }
-    double get_intermediate_calc() const noexcept { return intermediate_calc; }
-
-    // Calculate y for a given x.
-    // \param x: x value.
-    // \return: y value calculation.
-    double operator()(double x) const
-    {
-        return intermediate_calc * std::pow(1 + x * x / dof, -(dof + 1) / 2.0);
-    }
-};
 
 int test_TDisribution()
 {
@@ -155,38 +88,6 @@ int test_TDisribution()
     return num_fails;
 }
 
-// Iteration of Simpson's rule.
-//
-// A single iteration of Simpson's rule.
-//
-// \param x_begin: x range start of integration, must be finite.
-// \param x_end: x range end of integration, must be finite, and > x_begin.
-// \num_segments: Number of segments for integration. Must be positive and even.
-// \func: Function to integrate, passed as a functor object.
-// \return: Integration calculation.
-template <class Func>
-double simpsons_rule_iteration(double x_begin, double x_end, int num_seg, Func func)
-{
-    assert(std::isfinite(x_begin));
-    assert(std::isfinite(x_end));
-    assert(x_begin < x_end);
-    assert(num_seg > 0);
-    assert(num_seg % 2 == 0);
-
-    const double W = (x_end - x_begin) / num_seg;
-    double p = func(x_begin);
-    for (int i = 1; i < num_seg; i += 2)
-    {
-        p += 4 * func(x_begin + i * W);
-    }
-    for (int i = 2; i < num_seg; i += 2)
-    {
-        p += 2 * func(x_begin + i * W);
-    }
-    p += func(x_end);
-    return W / 3.0 * p;
-}
-
 int test_simpsons_rule_iteration()
 {
     struct TestCase
@@ -210,35 +111,6 @@ int test_simpsons_rule_iteration()
         }
     }
     return num_fails;
-}
-
-// Simpsons rule for integrating a function over a range of x.
-//
-// \param x_begin: x range start of integration, must be finite.
-// \param x_end: x range end of integration, must be finite, and > x_begin.
-// \acceptable_error: Allowable error in the calculated answer.
-// \func: Function to integrate, passed as a functor object.
-// \return: Integration calculation, or false if couldn't be calculated.
-template <class Func>
-std::optional<double> simpsons_rule(double x_begin, double x_end, double acceptable_error, Func func)
-{
-    assert(std::isfinite(x_begin));
-    assert(std::isfinite(x_end));
-    assert(x_begin < x_end);
-    assert(std::isfinite(acceptable_error));
-    int num_segments = 16;
-    double p1 = simpsons_rule_iteration(x_begin, x_end, num_segments, func);
-    const int num_segments_end = 1048576; // 2^20
-    for (num_segments = 32; num_segments <= num_segments_end; num_segments *= 2)
-    {
-        const double p2 = simpsons_rule_iteration(x_begin, x_end, num_segments, func);
-        if (abs(p2 - p1) <= acceptable_error)
-        {
-            return p2;
-        }
-        p1 = p2;
-    }
-    return {};
 }
 
 int test_simpsons_rule()
