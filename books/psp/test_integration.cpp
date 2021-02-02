@@ -21,12 +21,13 @@ int test_simpsons_rule_iteration()
     int num_fails = 0;
     for (const auto &tc : testCases)
     {
-        const auto actual = simpsons_rule_iteration(0.0, 1.1, tc.num_segments, TDistribution(9));
+        const auto actual = integration::simpsons_rule_iteration(0.0, 1.1, tc.num_segments, statistics::TDistribution(9));
         if (boost::math::relative_difference(tc.expected, actual) > 0.00000005)
         {
             ++num_fails;
-            std::cerr << __FUNCTION__ << "(num_segments: " << tc.num_segments
-                      << "), expected: " << tc.expected << ", actual: " << actual << "\n";
+            std::cerr << __FUNCTION__ << "(num_segments: " << tc.num_segments << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual << "\n";
         }
     }
     return num_fails;
@@ -48,7 +49,7 @@ int test_simpsons_rule()
     int num_fails = 0;
     for (const auto &tc : testCases)
     {
-        const auto actual = simpsons_rule(0.0, tc.x_end, 0.000005, TDistribution(tc.dof));
+        const auto actual = integration::simpsons_rule(0.0, tc.x_end, 0.000005, statistics::TDistribution(tc.dof));
         if (actual)
         {
             const auto rel_diff = boost::math::relative_difference(tc.expected, *actual);
@@ -56,16 +57,18 @@ int test_simpsons_rule()
             if (rel_diff > diff_thresh)
             {
                 ++num_fails;
-                std::cerr << __FUNCTION__ << "(x_end: " << tc.x_end << ", dof: " << tc.dof
-                          << "), expected: " << tc.expected << ", actual: " << *actual
+                std::cerr << __FUNCTION__ << "(x_end: " << tc.x_end << ", dof: " << tc.dof << ")"
+                          << ", expected: " << tc.expected
+                          << ", actual: " << *actual
                           << ", rel_diff: " << rel_diff << " > " << diff_thresh << "\n";
             }
         }
         else
         {
             ++num_fails;
-            std::cerr << __FUNCTION__ << "(x_end: " << tc.x_end << ", dof: " << tc.dof
-                      << "), expected: " << tc.expected << ", actual: false\n";
+            std::cerr << __FUNCTION__ << "(x_end: " << tc.x_end << ", dof: " << tc.dof << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: false\n";
         }
     }
     return num_fails;
@@ -81,6 +84,7 @@ int test_find_x_from_integration_value()
     };
     TestCase testCases[] = {
         {0.2, 6, 0.55338},
+        {0.35, 8, 1.108145},
         {0.45, 15, 1.75305},
         {0.495, 4, 4.60409},
     };
@@ -88,7 +92,7 @@ int test_find_x_from_integration_value()
     for (const auto &tc : testCases)
     {
         const double acceptable_error = 0.00000000001;
-        const auto actual = find_x_from_integration_value(tc.integration_value, acceptable_error, TDistribution(tc.dof));
+        const auto actual = integration::find_x_from_integration_value(tc.integration_value, acceptable_error, statistics::TDistribution(tc.dof));
         std::string fail_msg;
         if (actual)
         {
@@ -109,7 +113,8 @@ int test_find_x_from_integration_value()
             std::cerr << __FUNCTION__ << "(integration_value: " << tc.integration_value
                       << ", acceptable_error: " << acceptable_error
                       << ", TDistribution(" << tc.dof << ")"
-                      << "), expected: " << tc.expected << ", actual: " << fail_msg << "\n";
+                      << ", expected: " << tc.expected
+                      << ", actual: " << fail_msg << "\n";
         }
     }
     return num_fails;
