@@ -124,8 +124,46 @@ int test_none_of()
     }
     return num_fails;
 }
+
+int test_for_each()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        int expected;
+    };
+    struct Sum
+    {
+        void operator()(int i) { sum += i; }
+        int sum{0};
+    };
+    const TestCase test_cases[] = {
+        {{}, 0},
+        {{0}, 0},
+        {{1}, 1},
+        {{2}, 2},
+        {{1, 2}, 3},
+        {{1, 2, 3}, 6},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        Sum s;
+        const auto actual = for_each(tc.v.begin(), tc.v.end(), s);
+        if (tc.expected != actual.sum)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual.sum
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
-    const int num_fails = test_all_of() + test_any_of() + test_none_of();
+    const int num_fails = test_all_of() + test_any_of() + test_none_of() + test_for_each();
     return num_fails == 0 ? 0 : 1;
 }
