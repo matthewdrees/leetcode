@@ -162,8 +162,47 @@ int test_for_each()
     return num_fails;
 }
 
+int test_for_each_n()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        int n;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, 0, {}},
+        {{0}, 1, {1}},
+        {{1}, 1, {2}},
+        {{1}, 0, {1}},
+        {{2}, 1, {3}},
+        {{1, 2}, 0, {1, 2}},
+        {{1, 2}, 1, {2, 2}},
+        {{1, 2}, 2, {2, 3}},
+        {{1, 2, 3}, 0, {1, 2, 3}},
+        {{1, 2, 3}, 1, {2, 2, 3}},
+        {{1, 2, 3}, 2, {2, 3, 3}},
+        {{1, 2, 3}, 3, {2, 3, 4}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto v = tc.v;
+        for_each_n(v.begin(), tc.n, [](int &i)
+                   { i += 1; });
+        if (tc.expected != v)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ", n: " << tc.n << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(v)
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
 int main()
 {
-    const int num_fails = test_all_of() + test_any_of() + test_none_of() + test_for_each();
+    const int num_fails = test_all_of() + test_any_of() + test_none_of() + test_for_each() + test_for_each_n();
     return num_fails == 0 ? 0 : 1;
 }
