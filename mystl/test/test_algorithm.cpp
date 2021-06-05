@@ -201,8 +201,54 @@ int test_for_each_n()
     }
     return num_fails;
 }
+
+int test_count()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        int n;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, 0, 0},
+        {{0}, 1, 0},
+        {{1}, 1, 1},
+        {{1, 2}, 0, 0},
+        {{1, 2}, 1, 1},
+        {{1, 2}, 2, 1},
+        {{1, 1}, 2, 0},
+        {{1, 1}, 1, 2},
+        {{1, 2, 3}, 0, 0},
+        {{1, 2, 3}, 1, 1},
+        {{1, 2, 3}, 2, 1},
+        {{1, 2, 3}, 3, 1},
+        {{1, 2, 3}, 4, 0},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto v = tc.v;
+        auto actual = count(v.begin(), v.end(), tc.n);
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ", n: " << tc.n << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
-    const int num_fails = test_all_of() + test_any_of() + test_none_of() + test_for_each() + test_for_each_n();
+    const int num_fails = test_all_of() +
+                          test_any_of() +
+                          test_none_of() +
+                          test_for_each() +
+                          test_for_each_n() +
+                          test_count();
     return num_fails == 0 ? 0 : 1;
 }

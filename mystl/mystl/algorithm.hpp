@@ -1,3 +1,4 @@
+#include <iterator>
 
 template <class InputIt, class UnaryPredicate>
 constexpr bool all_of(InputIt first, InputIt last, UnaryPredicate p)
@@ -50,4 +51,19 @@ constexpr InputIt for_each_n(InputIt first, Size n, UnaryFunction f)
         f(*it);
     }
     return it;
+}
+
+template <class InputIt, class T>
+typename std::iterator_traits<InputIt>::difference_type
+count(InputIt first, InputIt last, const T &value)
+{
+    typename std::iterator_traits<InputIt>::difference_type n = 0;
+    for (auto it = first; it != last; ++it)
+    {
+        if (*it == value)
+        {
+            ++n;
+        }
+    }
+    return n;
 }
