@@ -54,13 +54,28 @@ constexpr InputIt for_each_n(InputIt first, Size n, UnaryFunction f)
 }
 
 template <class InputIt, class T>
-typename std::iterator_traits<InputIt>::difference_type
+constexpr typename std::iterator_traits<InputIt>::difference_type
 count(InputIt first, InputIt last, const T &value)
 {
     typename std::iterator_traits<InputIt>::difference_type n = 0;
     for (auto it = first; it != last; ++it)
     {
         if (*it == value)
+        {
+            ++n;
+        }
+    }
+    return n;
+}
+
+template <class InputIt, class UnaryPredicate>
+constexpr typename std::iterator_traits<InputIt>::difference_type
+count_if(InputIt first, InputIt last, UnaryPredicate p)
+{
+    typename std::iterator_traits<InputIt>::difference_type n = 0;
+    for (auto it = first; it != last; ++it)
+    {
+        if (p(*it))
         {
             ++n;
         }

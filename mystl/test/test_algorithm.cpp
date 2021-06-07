@@ -228,12 +228,48 @@ int test_count()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto v = tc.v;
-        auto actual = count(v.begin(), v.end(), tc.n);
+        auto actual = count(tc.v.begin(), tc.v.end(), tc.n);
         if (tc.expected != actual)
         {
             ++num_fails;
             std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ", n: " << tc.n << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
+int test_count_if()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, 0},
+        {{0}, 1},
+        {{1}, 0},
+        {{0, 0}, 2},
+        {{1, 0}, 1},
+        {{0, 1}, 1},
+        {{1, 1}, 0},
+        {{1, 1, 3}, 0},
+        {{1, 2, 3}, 1},
+        {{2, 4, 3}, 2},
+        {{2, 4, 6}, 3},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto actual = count_if(tc.v.begin(), tc.v.end(), [](int i)
+                               { return i % 2 == 0; });
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
                       << ", expected: " << tc.expected
                       << ", actual: " << actual
                       << "\n";
@@ -249,6 +285,7 @@ int main()
                           test_none_of() +
                           test_for_each() +
                           test_for_each_n() +
-                          test_count();
+                          test_count() +
+                          test_count_if();
     return num_fails == 0 ? 0 : 1;
 }
