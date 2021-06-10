@@ -278,6 +278,44 @@ int test_count_if()
     return num_fails;
 }
 
+int test_mismatch1()
+{
+    struct TestCase
+    {
+        std::vector<int> v1;
+        std::vector<int> v2;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}, 0},
+        {{0}, {0}, 1},
+        {{0}, {1}, 0},
+        {{1}, {0}, 0},
+        {{1, 2}, {1, 2}, 2},
+        {{1, 3}, {1, 2}, 1},
+        {{1, 2, 3}, {1, 2, 3}, 3},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto p = mismatch1(tc.v1.begin(), tc.v1.end(), tc.v2.begin());
+        const auto actual1 = std::distance(tc.v1.begin(), p.first);
+        const auto actual2 = std::distance(tc.v2.begin(), p.second);
+
+        if (tc.expected != actual1 || tc.expected != actual2)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v1: " << vec_to_string(tc.v1)
+                      << ", v2: " << vec_to_string(tc.v2) << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual1: " << actual1
+                      << ", actual2: " << actual2
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -286,6 +324,7 @@ int main()
                           test_for_each() +
                           test_for_each_n() +
                           test_count() +
-                          test_count_if();
+                          test_count_if() +
+                          test_mismatch1();
     return num_fails == 0 ? 0 : 1;
 }
