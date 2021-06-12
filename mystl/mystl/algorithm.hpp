@@ -85,7 +85,7 @@ count_if(InputIt first, InputIt last, UnaryPredicate p)
 
 template <class InputIt1, class InputIt2>
 constexpr std::pair<InputIt1, InputIt2>
-mismatch1(InputIt1 first1, InputIt1 last1,
+mismatch(InputIt1 first1, InputIt1 last1,
          InputIt2 first2)
 {
     for (; first1 != last1; ++first1, ++first2)
@@ -96,4 +96,43 @@ mismatch1(InputIt1 first1, InputIt1 last1,
         }
     }
     return {first1, first2};
+}
+
+template <class InputIt, class T>
+constexpr InputIt find(InputIt first, InputIt last, const T &value)
+{
+    for (; first != last; ++first)
+    {
+        if (*first == value)
+        {
+            break;
+        }
+    }
+    return first;
+}
+
+template <class InputIt, class UnaryPredicate>
+constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
+{
+    for (; first != last; ++first)
+    {
+        if (p(*first))
+        {
+            break;
+        }
+    }
+    return first;
+}
+
+template <class InputIt, class UnaryPredicate>
+constexpr InputIt find_if_not(InputIt first, InputIt last, UnaryPredicate p)
+{
+    for (; first != last; ++first)
+    {
+        if (!p(*first))
+        {
+            break;
+        }
+    }
+    return first;
 }
