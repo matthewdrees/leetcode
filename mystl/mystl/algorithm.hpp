@@ -136,3 +136,30 @@ constexpr InputIt find_if_not(InputIt first, InputIt last, UnaryPredicate p)
     }
     return first;
 }
+
+template <class ForwardIt1, class ForwardIt2>
+constexpr ForwardIt1 find_end(ForwardIt1 first, ForwardIt1 last,
+                              ForwardIt2 s_first, ForwardIt2 s_last)
+{
+    if (s_first == s_last)
+    {
+        return last;
+    }
+    auto ret = last;
+    for (; first != last; ++first)
+    {
+        auto s_it = s_first;
+        for (auto it = first; it != last && s_it != s_last; ++it, ++s_it)
+        {
+            if (!(*it == *s_it))
+            {
+                break;
+            }
+        }
+        if (s_it == s_last)
+        {
+            ret = first;
+        }
+    }
+    return ret;
+}
