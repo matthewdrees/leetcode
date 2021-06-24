@@ -478,6 +478,58 @@ int test_find_end()
     return num_fails;
 }
 
+int test_find_first_of()
+{
+    struct TestCase
+    {
+        std::vector<int> v1;
+        std::vector<int> v2;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}, 0},
+        {{1}, {}, 1},
+        {{}, {1}, 0},
+        {{0}, {1}, 1},
+        {{1}, {0}, 1},
+        {{1}, {1}, 0},
+        {{1, 1}, {0}, 2},
+        {{1, 1}, {1}, 0},
+        {{1, 2}, {1}, 0},
+        {{1, 2}, {2}, 1},
+        {{1, 2}, {0, 0}, 2},
+        {{1, 2}, {0, 1}, 0},
+        {{1, 2}, {0, 2}, 1},
+        {{1, 2}, {0, 3}, 2},
+        {{1, 2}, {1, 0}, 0},
+        {{1, 2}, {2, 0}, 1},
+        {{1, 2}, {3, 0}, 2},
+        {{1, 2, 3}, {0, 0}, 3},
+        {{1, 2, 3}, {0, 1}, 0},
+        {{1, 2, 3}, {0, 2}, 1},
+        {{1, 2, 3}, {0, 3}, 2},
+        {{1, 2, 3}, {1, 0}, 0},
+        {{1, 2, 3}, {2, 0}, 1},
+        {{1, 2, 3}, {3, 0}, 2},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto it = find_first_of(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
+        const auto actual = std::distance(tc.v1.begin(), it);
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v1: " << vec_to_string(tc.v1)
+                      << ", v2: " << vec_to_string(tc.v2) << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -491,6 +543,7 @@ int main()
                           test_find() +
                           test_find_if() +
                           test_find_if_not() +
-                          test_find_end();
+                          test_find_end() +
+                          test_find_first_of();
     return num_fails == 0 ? 0 : 1;
 }
