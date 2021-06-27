@@ -199,3 +199,34 @@ constexpr ForwardIt adjacent_find(ForwardIt first, ForwardIt last)
     }
     return last;
 }
+
+template <class ForwardIt1, class ForwardIt2>
+constexpr ForwardIt1 search(ForwardIt1 first, ForwardIt1 last,
+                            ForwardIt2 s_first, ForwardIt2 s_last)
+{
+    if (s_first == s_last)
+    {
+        return last;
+    }
+    auto range_last = first;
+    for (auto s_it = s_first; ++s_it != s_last && range_last != last; ++range_last)
+    {
+    }
+    for (; range_last != last; ++first, ++range_last)
+    {
+        // Could replace this with ::equal once it exists.
+        auto s_it = s_first;
+        for (auto it = first; s_it != s_last; ++it, ++s_it)
+        {
+            if (!(*it == *s_it))
+            {
+                break;
+            }
+        }
+        if (s_it == s_last)
+        {
+            return first;
+        }
+    }
+    return last;
+}
