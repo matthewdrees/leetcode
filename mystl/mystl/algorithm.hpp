@@ -180,3 +180,22 @@ constexpr InputIt find_first_of(InputIt first, InputIt last,
     }
     return last;
 }
+
+template <class ForwardIt>
+constexpr ForwardIt adjacent_find(ForwardIt first, ForwardIt last)
+{
+    if (first == last)
+    {
+        return last;
+    }
+    auto next = first;
+    while (++next != last)
+    {
+        if (*first == *next)
+        {
+            return first;
+        }
+        first = next;
+    }
+    return last;
+}

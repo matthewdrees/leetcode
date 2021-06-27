@@ -530,6 +530,43 @@ int test_find_first_of()
     return num_fails;
 }
 
+int test_adjacent_find()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, 0},
+        {{1}, 1},
+        {{0, 1}, 2},
+        {{1, 1}, 0},
+        {{1, 2, 3}, 3},
+        {{1, 1, 3}, 0},
+        {{1, 2, 2}, 1},
+        {{1, 2, 3, 4}, 4},
+        {{1, 1, 3, 4}, 0},
+        {{1, 2, 2, 4}, 1},
+        {{1, 2, 3, 3}, 2},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto it = adjacent_find(tc.v.begin(), tc.v.end());
+        const auto actual = std::distance(tc.v.begin(), it);
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -544,6 +581,7 @@ int main()
                           test_find_if() +
                           test_find_if_not() +
                           test_find_end() +
-                          test_find_first_of();
+                          test_find_first_of() +
+                          test_adjacent_find();
     return num_fails == 0 ? 0 : 1;
 }
