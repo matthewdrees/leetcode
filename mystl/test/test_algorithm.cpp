@@ -615,6 +615,52 @@ int test_search()
     return num_fails;
 }
 
+int test_search_n()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        int n;
+        int value;
+        std::ptrdiff_t expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, -1, 1, 0},
+        {{}, 0, 1, 0},
+        {{}, 1, 1, 0},
+        {{1}, -1, 1, 0},
+        {{1}, 0, 1, 0},
+        {{1}, 1, 1, 0},
+        {{1}, 1, 2, 1},
+        {{1, 1}, 1, 1, 0},
+        {{1, 1}, 2, 1, 0},
+        {{1, 1}, 3, 1, 2},
+        {{1, 2}, 1, 1, 0},
+        {{1, 2}, 1, 2, 1},
+        {{1, 2, 2}, 1, 2, 1},
+        {{1, 2, 2}, 2, 2, 1},
+        {{2, 2, 2}, 3, 2, 0},
+        {{2, 2, 2}, 2, 2, 0},
+        {{2, 2, 2}, 3, 2, 0},
+        {{2, 2, 2}, 4, 2, 3},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto it = search_n(tc.v.begin(), tc.v.end(), tc.n, tc.value);
+        const auto actual = std::distance(tc.v.begin(), it);
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ", n: " << tc.n << ", value: " << tc.value << ")"
+                      << ", expected: " << tc.expected
+                      << ", actual: " << actual
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -631,6 +677,7 @@ int main()
                           test_find_end() +
                           test_find_first_of() +
                           test_adjacent_find() +
-                          test_search();
+                          test_search() +
+                          test_search_n();
     return num_fails == 0 ? 0 : 1;
 }

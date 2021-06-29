@@ -230,3 +230,41 @@ constexpr ForwardIt1 search(ForwardIt1 first, ForwardIt1 last,
     }
     return last;
 }
+
+template <class ForwardIt, class Size, class T>
+constexpr ForwardIt search_n(ForwardIt first, ForwardIt last, Size count, const T &value)
+{
+    if (count <= 0)
+    {
+        return first;
+    }
+    Size run_count = 0;
+    auto run_start = last;
+    for (; first != last; ++first)
+    {
+        if (*first == value)
+        {
+            if (run_count == 0)
+            {
+                run_start = first;
+            }
+            ++run_count;
+            if (run_count == count)
+            {
+                return run_start;
+            }
+        }
+        else
+        {
+            run_count = 0;
+        }
+    }
+    if (run_count == count)
+    {
+        return run_start;
+    }
+    else
+    {
+        return last;
+    }
+}
